@@ -14,7 +14,26 @@ Killer::~Killer(void)
 void Killer::update()
 {
 	//cone.up
-	speed.x = 0.05f;
+
+	if (distanceMoveable.x + startingPoint.x <= position.x && speed.x > 0)
+	{
+		speed.x *= -1;
+	}
+	else if (startingPoint.x - distanceMoveable.x  >= position.x && speed.x < 0)
+	{
+		speed.x *= -1;
+	}
+	
+	if (distanceMoveable.z + startingPoint.z <= position.z && speed.z > 0)
+	{
+		speed.z *= -1;
+	}
+	else if (startingPoint.z - distanceMoveable.z  >= position.z && speed.z < 0)
+	{
+		speed.z *= -1;
+	}
+
+	//speed.x = 0.05f;
 	cone.position += speed;
 }
 void Killer::initlize(vector3 starting,vector3 speed, vector3 distance)

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include"stdafx.h"
 #include "VectorLib.h"
 #include <iostream>
 
@@ -78,7 +78,7 @@ vector2 vector2::operator * (float change)
 //Maths
 float vector2::magnitude()
 {
-	return (float)sqrt((pow((double)x,2) + pow((double)y,2)));
+	return (float)sqrt((powf(x,2) + pow(y,2)));
 }
 float vector2::dotProduct(vector2 change)
 {
@@ -86,7 +86,7 @@ float vector2::dotProduct(vector2 change)
 }
 float vector2::crossProduct(vector2 change)
 {
-	return ((x*change.y)-(y*change.x));
+	return x * change.y - y * change.x;
 }
 float vector2::eulerAngle(vector2 change)
 {
@@ -259,7 +259,7 @@ vector3 vector3::crossProduct(vector3 change)
 	vector3 temp(0,0,0);
 	temp.x = ((y*change.z)-(z*change.y));
 	temp.y = ((z*change.x)-(x*change.z));
-	temp.x = ((x*change.y)-(y*change.x));
+	temp.z = ((x*change.y)-(y*change.x));
 	return temp;
 }
 vector3 vector3::linearInterp(float alpha,vector3 change)
@@ -309,7 +309,7 @@ vector4::vector4(char*r, char*b, char*g)
 	for (int i = 0; i < 3; i++)
 	{
 		char * searchChar = "rb";
-		int value = 0;
+		float value = 0;
 
 		if (i == 0)
 			searchChar = r;
@@ -478,6 +478,8 @@ float vector4::getPart(int change)
 	case 2:
 		return c;
 	case 3:
+		return d;
+	default:
 		return d;
 	}
 }
@@ -760,20 +762,20 @@ bool closestPowTwo(float & value)
 {
 	if (value <= 0)
 		return 0;
-	std::map<int,int> powOfTwo;
-	std::map<int,int> powOfTwoDeduct;
-	for(int i = 0; i < 15; i++)
+	std::map<int,float> powOfTwo;
+	std::map<int,float> powOfTwoDeduct;
+	for(float i = 0; i < 15; i++)
 	{
 		if (value == powf(2,i))
 			return true;
 			//return powf(2,i);
 		else
 		{
-			powOfTwo[i] = powf(2,i);
+			powOfTwo[(int)i] = powf(2,i);
 		//cout << powf(2,i) << endl;
 		}
 	}
-	typedef std::map<int,int>::iterator it_type;
+	typedef std::map<int,float>::iterator it_type;
 	for(it_type iterator = powOfTwo.begin(); iterator != powOfTwo.end(); iterator++)
 	{
 		powOfTwoDeduct[iterator->first] = (value - iterator->second);
@@ -781,7 +783,7 @@ bool closestPowTwo(float & value)
 			powOfTwoDeduct[iterator->first] *= -1;
 	}
 	int lowestPow = 0;
-	int lowestValue = 1000;
+	float lowestValue = 1000;
 	for(it_type iterator = powOfTwoDeduct.begin(); iterator != powOfTwoDeduct.end(); iterator++)
 	{
 		if (iterator->second < lowestValue)

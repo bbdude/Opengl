@@ -23,8 +23,11 @@
 
 vector2 mouse(0,0);
 vector2 screen(800,600);
+//vector2 screen(1500,800);
 MapCollection maps;
 Player player;
+
+void drawGui();
 
 void init(void)
 {
@@ -61,6 +64,13 @@ void keyboard_up(unsigned char key, int x, int y)
 	maps.keyState[key] = false;
 	switch(key)
 	{
+		case '/':
+			player.position.x = 0;
+			player.position.z = 0;
+			break;
+		case '5':
+			player.health--;
+			break;
 		case '8': case 'w': case 'W':
 			player.speed.x = 0;
 			player.speed.z = 0;
@@ -77,6 +87,21 @@ void keyboard_up(unsigned char key, int x, int y)
 			break;
 		case 'p': case 'P':
 			glutFullScreen();
+			break;
+		case 'b': case 'B':
+			std::cout << "Breaking the game :D";
+			break;
+		case 'f': case 'F':
+			if(player.filling == 0)
+			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				player.filling = 1;
+			}
+			else
+			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				player.filling = 0;
+			}
 			break;
 	}
 }
@@ -130,18 +155,6 @@ void keyCommands()
 				break;
 			case 'q': case 'Q':
 				//bulletpair.fireBullet();
-				break;
-			case 'r': case 'R':
-				if(player.filling == 0)
-				{
-					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-					player.filling = 1;
-				}
-				else
-				{
-					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-					player.filling = 0;
-				}
 				break;
 			}
 		}
@@ -200,39 +213,53 @@ void mouseMotion(int x, int y)
 	//	glutWarpPointer(mouse.x,50);
 	//else if (mouse.y > screen.y - 10)
 	//	glutWarpPointer(mouse.x, screen.y - 50);
+	static bool warped = false;
+	bool capture = false;	
+    if( warped )
+    {
+        warped = false;
+        return;
+    }
+
 	mouse.x = x;
 	mouse.y = y;
-	if (x > screen.x/2)
+	if (x != screen.x || y != screen.y)
+		capture = true;
+	if (capture)
 	{
-		player.angle -= 0.05f;
-		player.lx = sin(player.angle);
-		player.lz = -cos(player.angle);
-		glutWarpPointer(screen.x/2,screen.y/2);
+		warped = true;
+		if (x > screen.x/2)
+		{
+			player.angle -= 0.05f;
+			player.lx = sin(player.angle);
+			player.lz = -cos(player.angle);
+			glutWarpPointer(screen.x/2,screen.y/2);
+		}
+		else if (x < screen.x/2)
+		{
+			player.angle += 0.05f;
+			//if (player.vertAngle < 0)
+				//player.vertAngle = 0;
+			player.lx = sin(player.angle); 
+			player.lz = -cos(player.angle);
+			glutWarpPointer(screen.x/2,screen.y/2);
+		}
+		if (y < screen.y/2 && player.vertAngle < 0.8)
+		{
+			player.vertAngle += 0.05f;
+			player.ly = sin(player.vertAngle);
+			glutWarpPointer(screen.x/2,screen.y/2);
+		}
+		else if (y > screen.y/2 && player.vertAngle > -0.8)
+		{
+			player.vertAngle -= 0.05f;
+			//if (player.vertAngle > 360)
+				//player.vertAngle = 360;
+			player.ly = sin(player.vertAngle);
+			glutWarpPointer(screen.x/2,screen.y/2);
+		}
 	}
-	else if (x < screen.x/2)
-	{
-		player.angle += 0.05f;
-		//if (player.vertAngle < 0)
-			//player.vertAngle = 0;
-		player.lx = sin(player.angle);
-		player.lz = -cos(player.angle);
-		glutWarpPointer(screen.x/2,screen.y/2);
-	}
-	if (y < screen.y/2)
-	{
-		player.vertAngle += 0.05f;
-		player.ly = sin(player.vertAngle);
-		glutWarpPointer(screen.x/2,screen.y/2);
-	}
-	else if (y > screen.y/2)
-	{
-		player.vertAngle -= 0.05f;
-		//if (player.vertAngle > 360)
-			//player.vertAngle = 360;
-		player.ly = sin(player.vertAngle);
-		glutWarpPointer(screen.x/2,screen.y/2);
-	}
-	//glutWarpPointer(screen.x/2,screen.y/2);
+		//glutWarpPointer(screen.x/2,screen.y/2);
 }
 
 int detectXZCollision(float x,float y,float xx, float yy, vector2 size)
@@ -297,7 +324,10 @@ void display(void)
 
 	///<summary>Draw commands </summary>
 	glutStrokeCharacter(GLUT_STROKE_ROMAN,player.position.y);
+	player.draw();
 	maps.draw();
+
+	drawGui();
 
 	glFlush();
 	glutSwapBuffers();
@@ -329,32 +359,113 @@ int main(int argc, char **argv)
     return(1);
 }
 
-
-
-/*
-void drawTraingle(int x, int y)
+void drawGui()
 {
-	y = screen.y - y;
-	//x is bottom mid point on x, y is bottoms mid point on y, z is top points 
-	glDisable(GL_DEPTH_TEST);
+	
+
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	glOrtho(0,screen.x,0,screen.y, -5,1);
+	glOrtho(0.0, screen.x, screen.y, 0.0, -1.0, 10.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glBegin(GL_TRIANGLES);
+	glDisable(GL_CULL_FACE);
 
-	glColor3f(0.5,0.5,0.5);
-	glVertex2f( x - 10,y + 10);
-	glVertex2f( x + 10,y + 10);
-	glVertex2f(x, y - 10);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	
+	/////////////////////Health bar///////////
+	for(int i = maps.whatBullet; i != 10;i++)
+	{
+	glBegin(GL_QUADS);
+		glColor3f(0.0f, 1.0f, 0.0);
+
+		glVertex2f((10*(i+1)),10);
+		glVertex2f((10*(i+1)),20);
+		glVertex2f((10*(i+1)) + 5,20);
+		glVertex2f((10*(i+1)) + 5,10);
+
 
 	glEnd();
-	glEnable(GL_DEPTH_TEST);
+	/////////////////////Health bar///////////
+	}if (player.health > 0)
+	{
+	glBegin(GL_QUADS);
+		glColor3f(1.0f, 0.0f, 0.0);		
+		
+		glVertex2f((screen.x/2 - (screen.x/6)) - 2.6*(100 - player.health),screen.y - (screen.y/35)); 
+		glVertex2f((screen.x/2 - (screen.x/6)) - 2.6*(100 - player.health),screen.y - (screen.y/15));
+		glVertex2f((screen.x/35), screen.y - (screen.y/15));
+		glVertex2f((screen.x/35),screen.y-(screen.y/35));
+
+
+
+	glEnd();
+	}
+	/////////////////////Mana/energy bar///////////
+	if (player.mana > 0)
+	{
+	glBegin(GL_QUADS);
+		glColor3f(0.0f, 0.0f, 1.0);
+		
+		glVertex2f((screen.x/2 + (screen.x/6)) + 2.6*(100 - player.mana),screen.y - (screen.y/35)); 
+		glVertex2f((screen.x/2 + (screen.x/6)) + 2.6*(100 - player.mana),screen.y - (screen.y/15));
+		glVertex2f((screen.x- (screen.x/35)), screen.y - (screen.y/15));
+		glVertex2f((screen.x -(screen.x/35)),screen.y-(screen.y/35));
+
+	glEnd();
+	}
+	//////////////////////Top////////////////
+	glBegin(GL_POLYGON);
+		glColor3f(0.0f, 0.0f, 0.0);
+
+		glVertex2f(0.0, 0.0);
+		glVertex2f(screen.x/2.5,0.0);
+		glVertex2f(screen.x/2.5,0.0);
+
+		//glVertex2f(300, 200);
+		glVertex2f(screen.x/2.5-(screen.x/6), screen.y/15);
+		glVertex2f(0.0, screen.y/20);
+
+	glEnd();
+	glBegin(GL_POLYGON);
+		glColor3f(0.0f, 0.0f, 0.0);
+
+		glVertex2f(screen.x, 0.0);
+		glVertex2f(screen.x - screen.x/2.5,0.0);
+		glVertex2f(screen.x - screen.x/2.5,0.0);
+
+		//glVertex2f(300, 200);
+		glVertex2f(screen.x - screen.x/2.5+(screen.x/6), screen.y/15);
+		glVertex2f(screen.x, screen.y/20);
+
+	glEnd();
+	/////////////////////////Bottom///////////////////
+	glBegin(GL_POLYGON);
+		glColor3f(0.0f, 0.0f, 0.0);
+
+		glVertex2f(0, screen.y);
+		glVertex2f(screen.x/2,screen.y);
+		glVertex2f(screen.x/2,screen.y);
+
+		//glVertex2f(300, 200);
+		glVertex2f(screen.x/2-(screen.x/6), screen.y - screen.y/10);
+		glVertex2f(0, screen.y - screen.y/10);
+
+	glEnd();
+	glBegin(GL_POLYGON);
+		glColor3f(0.0f, 0.0f, 0.0);
+
+		glVertex2f(screen.x, screen.y);
+		glVertex2f(screen.x/2,screen.y);
+		glVertex2f(screen.x/2,screen.y);
+
+		//glVertex2f(300, 200);
+		glVertex2f(screen.x/2+(screen.x/6), screen.y - screen.y/10);
+		glVertex2f(screen.x, screen.y - screen.y/10);
+
+	glEnd();
+
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
-	glDepthMask(0);
 }
-*/

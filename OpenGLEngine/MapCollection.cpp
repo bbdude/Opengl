@@ -18,8 +18,9 @@ void MapCollection::init(int trees,int cubes,int goombas,int killers)
 {
 	vector2 size(-1000,1);
 	vector3 position(500,-10,-500);
-
+	vector3 goombaDist(5,0,5);
 	vector3 color(0.4,0.3,0);
+
 	this->cubes["Floor"];
 	this->cubes["Floor"].fill(position,size,color,0);
 
@@ -34,10 +35,13 @@ void MapCollection::init(int trees,int cubes,int goombas,int killers)
 	size.y = 5;
 	position.fill(-5,3,-5);
 	color.fill(1,0,1);
+	vector3 speed(0.05f,0,0);
 	for (int i = 0; i < killers; i++)
 	{
 		this->killers[i];
 		this->killers[i].fill(position,size,color,0);
+		this->killers[i].initlize(position,speed,goombaDist);
+		this->killers[i].speed.x = 0.05f;
 	}
 
 	masterBullet.setColor(1,0,0);
@@ -49,9 +53,8 @@ void MapCollection::init(int trees,int cubes,int goombas,int killers)
 	
 	srand (time(0));
 	vector3 goombaLoc(10,0,10);
-	vector3 goombaDist(5,0,5);
-	//0.5 is pretty fast btw
 	vector3 goombaSpeed(0.1f,0,0);
+	//0.5 is pretty fast btw
 
 	for (int i = 0; i < goombas; i++)
 	{

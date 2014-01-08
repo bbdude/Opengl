@@ -126,17 +126,23 @@ void Cube::draw(GLfloat r, GLfloat g, GLfloat b)
 void Cube::draw(GLfloat r, GLfloat g, GLfloat b,GLfloat rr, GLfloat gg, GLfloat bb,GLfloat rrr, GLfloat ggg, GLfloat bbb)
 {
 	glBegin(GL_TRIANGLES);
+	glPushMatrix();
 	for (int l_index = 0; l_index < 12; l_index++)
 	{
-		if (angle != 0)
-			glRotatef(-90.0f,0.0, 1.0, 1.0);
+		//if (angle != 0)
+		//	glRotatef(-90.0f,0.0, 1.0, 1.0);
 		glColor3f(r,g,b);
+	//glRotatef(45,0.0, 1.0, 1.0);
 		glVertex3f( vertex[ polygon[l_index].a ].x, vertex[ polygon[l_index].a ].y, vertex[ polygon[l_index].a ].z);
 		glColor3f(rr,gg,bb);
+	//glRotatef(45,0.0, 1.0, 1.0);
 		glVertex3f( vertex[ polygon[l_index].b ].x, vertex[ polygon[l_index].b ].y, vertex[ polygon[l_index].b ].z);
 		glColor3f(rrr,ggg,bbb);
+	//glRotatef(45,0.0, 1.0, 1.0);
 		glVertex3f( vertex[ polygon[l_index].c ].x, vertex[ polygon[l_index].c ].y, vertex[ polygon[l_index].c ].z);
 	}
+	glRotatef(45,0.0, 1.0, 1.0);
+	glPopMatrix();
 	glEnd();
 }
 
