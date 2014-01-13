@@ -75,6 +75,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\Desktop\Projects\TrojanFont.glf" />
     <None Include="ClassDiagram1.cd" />
     <None Include="glut.def" />
     <None Include="glut32.dll" />

@@ -16,8 +16,8 @@ public:
 	vector3 size;
 	int filling;
 	int jump;
-	int health;
-	int mana;
+	float health;
+	float mana;
 	float invTimer;
 	float angle;
 	float vertAngle;

@@ -37,6 +37,12 @@ Player::~Player(void)
 
 void Player::update(bool fall)
 {
+	if (invTimer > 0)
+		invTimer -= 0.5;
+	if (health > 0 && health < 100 && invTimer == 0)
+		health+= 0.001;
+	//else
+		//invTimer = 100;
 	//lArm.position.x = lx * 0.5f;
 	//lArm.position.z = lz * 0.5f;
 	//armAngle += 0.25f;

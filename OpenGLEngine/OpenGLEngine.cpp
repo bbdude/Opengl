@@ -17,6 +17,7 @@
 #include "MapCollection.h"
 #include "Cube.h"
 #include "Player.h"
+//#include "glfont.h"
 
 #define MAX_VERTICES 2000 
 #define MAX_POLYGONS 2000
@@ -28,6 +29,8 @@ MapCollection maps;
 Player player;
 
 void drawGui();
+void drawMenu();
+void mouseClick(int button,int state,int x,int y);
 
 void init(void)
 {
@@ -80,7 +83,7 @@ void keyboard_up(unsigned char key, int x, int y)
 			player.speed.z = 0;
 			break;
 		case 'q': case 'Q':
-			maps.fireBullet(player.position,0,player.lx,player.lz);
+			maps.fireBullet(player.position,0,player.lx,player.ly,player.lz);
 			break;
 		case 'r': case 'R':
 			maps.reload();
@@ -145,12 +148,15 @@ void keyCommands()
 				break;
 
 			case ' ':
-		
-				if (player.jump == 2)
+				if (player.jump == 2 && maps.curr == maps.GAME)
 				{
 					player.jump = 1;
 					player.jumpYPos = player.position.y;
 					//position.y++;
+				}
+				else if (maps.curr == maps.MENU)
+				{
+					maps.curr = maps.GAME;
 				}
 				break;
 			case 'q': case 'Q':
@@ -309,7 +315,7 @@ int detectXZCollision(float x,float y,float xx, float yy, vector2 size)
 void update()
 {
 	//bool falling = maps.update(player.speed,player.position,player.size,player.jump) ;
-	bool fall = maps.update(player.speed,player.position,player.size,player.jump);
+	bool fall = maps.update(player.speed,player.position,player.size,player.jump,player.invTimer,player.health);
 	player.update(fall);
 }
 
@@ -320,15 +326,31 @@ void display(void)
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(player.position.x,player.position.y + 1.0f,player.position.z, player.position.x + player.lx, player.position.y + 1.0f + player.ly,player.position.z + player.lz, 0.0f, 1.0f,0.0f);
-
+	
 	///<summary>Draw commands </summary>
-	glutStrokeCharacter(GLUT_STROKE_ROMAN,player.position.y);
-	player.draw();
-	maps.draw();
+	//glutStrokeCharacter(GLUT_STROKE_ROMAN,player.position.y);
 
-	drawGui();
+	switch(maps.curr)
+	{
+	case maps.GAME:
+		
+		gluLookAt(player.position.x,player.position.y + 1.0f,player.position.z, player.position.x + player.lx, player.position.y + 1.0f + player.ly,player.position.z + player.lz, 0.0f, 1.0f,0.0f);
 
+		player.draw();
+		maps.draw();
+	
+		drawGui();
+		break;
+	case maps.MENU:
+		drawMenu();
+		break;
+	case maps.EXIT:
+		break;
+	case maps.SPLASH:
+		break;
+	case maps.OPTIONS:
+		break;
+	}
 	glFlush();
 	glutSwapBuffers();
 	
@@ -353,10 +375,18 @@ int main(int argc, char **argv)
 	glutSpecialFunc(keyboard_s);
 	glutPassiveMotionFunc(mouseMotion);
 	glutIgnoreKeyRepeat(GL_TRUE);
+	glutMouseFunc(mouseClick);
 	init();
 	glutMainLoop();
 
     return(1);
+}
+
+void mouseClick(int button,int state,int x,int y)
+{
+	if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+		maps.fireBullet(player.position,player.angle,player.lx,player.ly,player.lz);
+    }
 }
 
 void drawGui()
@@ -372,25 +402,57 @@ void drawGui()
 	glDisable(GL_CULL_FACE);
 
 	glClear(GL_DEPTH_BUFFER_BIT);
-	
-	/////////////////////Health bar///////////
-	for(int i = maps.whatBullet; i != 10;i++)
-	{
-	glBegin(GL_QUADS);
-		glColor3f(0.0f, 1.0f, 0.0);
-
-		glVertex2f((10*(i+1)),10);
-		glVertex2f((10*(i+1)),20);
-		glVertex2f((10*(i+1)) + 5,20);
-		glVertex2f((10*(i+1)) + 5,10);
+	/////////////////////Pointer//////////////
+		glBegin(GL_TRIANGLE_FAN);
+		glColor3f(0.8,0.8,0.8);
+		
+		glVertex2f(screen.x/2,screen.y/2);//a
+		glColor3f(0,0,0);
+		glVertex2f(((screen.x/2)+screen.x/94),screen.y/2);//b
+		glVertex2f((screen.x/2),(screen.y/2)-screen.y/94);//c
+		glVertex2f(((screen.x/2)-screen.x/94),screen.y/2);//d
+		glVertex2f((screen.x/2) - screen.x/132,(screen.y/2)+screen.y/94);//e
+		glVertex2f((screen.x/2) + screen.x/132,(screen.y/2)+screen.y/94);//f
+		glVertex2f(((screen.x/2)+screen.x/94),screen.y/2);//g
+		
+		glVertex2f(screen.x/2,screen.y/2);//h
 
 
 	glEnd();
 	/////////////////////Health bar///////////
-	}if (player.health > 0)
+	if (maps.whatBullet < 10)
+	for(int i = maps.whatBullet; i != 10;i++)
 	{
 	glBegin(GL_QUADS);
-		glColor3f(1.0f, 0.0f, 0.0);		
+		float color = 1-(i*0.1f)+0.1f;
+		glColor3f(0.0f, color, 0.0);
+
+		glVertex2f(((screen.x/40)*(i+1)),10);
+		glVertex2f(((screen.x/40)*(i+1)),20);
+		glVertex2f(((screen.x/40)*(i+1)) + 10,20);
+		glVertex2f(((screen.x/40)*(i+1)) + 10,10);
+
+
+	glEnd();
+	}
+	else
+	{
+		glBegin(GL_QUADS);
+		glColor3f(1.0f, 0.0f, 0.0);
+
+		glVertex2f((screen.x/40),10);
+		glVertex2f((screen.x/40),20);
+		glVertex2f((screen.x/4),20);
+		glVertex2f((screen.x/4),10);
+	}
+	/////////////////////Health bar///////////
+	if (player.health > 0)
+	{
+	glBegin(GL_QUADS);
+		if (player.invTimer == 0)
+			glColor3f(1.0f, 0.0f, 0.0);	
+		else
+			glColor3f(1.0f, 0.0f, 1.0);	
 		
 		glVertex2f((screen.x/2 - (screen.x/6)) - 2.6*(100 - player.health),screen.y - (screen.y/35)); 
 		glVertex2f((screen.x/2 - (screen.x/6)) - 2.6*(100 - player.health),screen.y - (screen.y/15));
@@ -464,6 +526,73 @@ void drawGui()
 		glVertex2f(screen.x, screen.y - screen.y/10);
 
 	glEnd();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void drawMenu()
+{
+	
+	gluLookAt(0.0, 30.0, 100.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0, screen.x, screen.y, 0.0, -1.0, 10.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glDisable(GL_CULL_FACE);
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+	
+	/////////////////////Health bar///////////
+	//GLFONT font;
+    //glFontCreate(&font, "TrojanFont.glf", 0);
+	//glFontBegin(&font);
+	//glScalef(8.0, 8.0, 8.0);
+	//glRotatef(180,0,0,0);x
+	glTranslatef(30, 30, 0);
+	//glFontTextOut("Test", 5, 5, 0);
+	//glFontEnd();
+	//glFlush();
+	//glBegin(GL_QUADS);
+	char text[13] = "Menu Shiz";
+	for (int i = 0; i != 9; i++)
+	{
+		glPushMatrix();
+		glColor3f(1,0,0);
+		glTranslatef((screen.x/8) +(screen.x/18) *i, screen.x/6, 0);
+		glRotatef(180, 1.0, 0.0, 0.0);
+		glScalef(0.2,0.2,0.2);
+		glutStrokeCharacter(GLUT_STROKE_ROMAN,text[i]);
+		glPopMatrix();
+	}	
+	text[0] = 'S';
+	text[1] = 'p';
+	text[2] = 'a';
+	text[3] = 'c';
+	text[4] = 'e';
+	text[5] = ' ';
+	text[6] = 'T';
+	text[7] = 'o';
+	text[8] = ' ';
+	text[9] = 'P';
+	text[10] = 'l';
+	text[11] = 'a';
+	text[12] = 'y';
+	for (int i = 0; i != 13; i++)
+	{
+		glPushMatrix();
+		glColor3f(1,0,0);
+		glTranslatef((screen.x/8) +(screen.x/18) *i, screen.x/2, 0);
+		glRotatef(180, 1.0, 0.0, 0.0);
+		glScalef(0.1,0.1,0.1);
+		glutStrokeCharacter(GLUT_STROKE_ROMAN,text[i]);
+		glPopMatrix();
+	}	
+
+	//glEnd();
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
