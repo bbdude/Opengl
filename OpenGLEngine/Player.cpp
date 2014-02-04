@@ -5,6 +5,7 @@
 
 Player::Player(void)
 {
+	lightInf = 0.3f;
 	size.fill(10,10,10);
 	jump = 0;
 	angle = 0.0f;

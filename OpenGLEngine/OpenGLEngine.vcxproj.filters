@@ -32,11 +32,29 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="glut32.dll" />
-    <None Include="test.png">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="ClassDiagram1.cd" />
     <None Include="..\..\..\..\Desktop\Projects\TrojanFont.glf" />
+    <None Include="test.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="test1.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="test2.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="test3.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="test4.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="test5.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="test0.png">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -83,6 +101,9 @@
     </ClInclude>
     <ClInclude Include="Killer.h">
       <Filter>Header Files\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OpenGLEngine2D\SOIL.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

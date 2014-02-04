@@ -17,10 +17,6 @@
 #include "MapCollection.h"
 #include "Cube.h"
 #include "Player.h"
-//#include "glfont.h"
-
-#define MAX_VERTICES 2000 
-#define MAX_POLYGONS 2000
 
 vector2 mouse(0,0);
 vector2 screen(800,600);
@@ -31,6 +27,7 @@ Player player;
 void drawGui();
 void drawMenu();
 void mouseClick(int button,int state,int x,int y);
+void drawBoxedMenu(int rows,std::string text);
 
 void init(void)
 {
@@ -67,6 +64,27 @@ void keyboard_up(unsigned char key, int x, int y)
 	maps.keyState[key] = false;
 	switch(key)
 	{
+		case ' ':
+			if (player.jump == 2 && maps.curr == maps.GAME)
+			{
+				player.jump = 1;
+				player.jumpYPos = player.position.y;
+				//position.y++;
+			}
+			else if (maps.curr == maps.MENU)
+			{
+				maps.curr = maps.GAME;
+			}
+			break;
+		case 27:
+			//glutDestroyWindow(Win.id);
+			//exit(0);
+			maps.paused = !maps.paused;
+			if (!maps.paused)
+				glutSetCursor(GLUT_CURSOR_NONE);
+			else
+				glutSetCursor(GLUT_CURSOR_CROSSHAIR);
+			break;
 		case '/':
 			player.position.x = 0;
 			player.position.z = 0;
@@ -117,10 +135,6 @@ void keyCommands()
 		{
 			switch(iterator->first)
 			{
-			case 27:
-				//glutDestroyWindow(Win.id);
-				exit(0);
-				break;
 			case '4': case 'a': case 'A':
 				//angle -= 0.005f;
 				//lx = sin(angle);
@@ -147,18 +161,6 @@ void keyCommands()
 				//lz = -cos(angle);
 				break;
 
-			case ' ':
-				if (player.jump == 2 && maps.curr == maps.GAME)
-				{
-					player.jump = 1;
-					player.jumpYPos = player.position.y;
-					//position.y++;
-				}
-				else if (maps.curr == maps.MENU)
-				{
-					maps.curr = maps.GAME;
-				}
-				break;
 			case 'q': case 'Q':
 				//bulletpair.fireBullet();
 				break;
@@ -219,6 +221,8 @@ void mouseMotion(int x, int y)
 	//	glutWarpPointer(mouse.x,50);
 	//else if (mouse.y > screen.y - 10)
 	//	glutWarpPointer(mouse.x, screen.y - 50);
+	if (!maps.paused)
+	{
 	static bool warped = false;
 	bool capture = false;	
     if( warped )
@@ -264,6 +268,7 @@ void mouseMotion(int x, int y)
 			player.ly = sin(player.vertAngle);
 			glutWarpPointer(screen.x/2,screen.y/2);
 		}
+	}
 	}
 		//glutWarpPointer(screen.x/2,screen.y/2);
 }
@@ -314,9 +319,12 @@ int detectXZCollision(float x,float y,float xx, float yy, vector2 size)
 
 void update()
 {
+	if (!maps.paused)
+	{
 	//bool falling = maps.update(player.speed,player.position,player.size,player.jump) ;
-	bool fall = maps.update(player.speed,player.position,player.size,player.jump,player.invTimer,player.health);
+		bool fall = maps.update(player.speed,player.position,player.size,player.jump,player.invTimer,player.health,player.lightInf);
 	player.update(fall);
+	}
 }
 
 void display(void)
@@ -384,9 +392,11 @@ int main(int argc, char **argv)
 
 void mouseClick(int button,int state,int x,int y)
 {
-	if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+	if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && !maps.paused) {
 		maps.fireBullet(player.position,player.angle,player.lx,player.ly,player.lz);
     }
+	else if (maps.paused && y > (screen.y / 2) - (screen.y / 5) && y < (screen.y/2) + (screen.y/5) && x > screen.x/4 && x < (screen.x/2) + (screen.x/4))
+		exit(0);
 }
 
 void drawGui()
@@ -402,23 +412,7 @@ void drawGui()
 	glDisable(GL_CULL_FACE);
 
 	glClear(GL_DEPTH_BUFFER_BIT);
-	/////////////////////Pointer//////////////
-		glBegin(GL_TRIANGLE_FAN);
-		glColor3f(0.8,0.8,0.8);
-		
-		glVertex2f(screen.x/2,screen.y/2);//a
-		glColor3f(0,0,0);
-		glVertex2f(((screen.x/2)+screen.x/94),screen.y/2);//b
-		glVertex2f((screen.x/2),(screen.y/2)-screen.y/94);//c
-		glVertex2f(((screen.x/2)-screen.x/94),screen.y/2);//d
-		glVertex2f((screen.x/2) - screen.x/132,(screen.y/2)+screen.y/94);//e
-		glVertex2f((screen.x/2) + screen.x/132,(screen.y/2)+screen.y/94);//f
-		glVertex2f(((screen.x/2)+screen.x/94),screen.y/2);//g
-		
-		glVertex2f(screen.x/2,screen.y/2);//h
-
-
-	glEnd();
+	
 	/////////////////////Health bar///////////
 	if (maps.whatBullet < 10)
 	for(int i = maps.whatBullet; i != 10;i++)
@@ -526,6 +520,44 @@ void drawGui()
 		glVertex2f(screen.x, screen.y - screen.y/10);
 
 	glEnd();
+	if (!maps.paused)
+	{
+	/////////////////////Pointer//////////////
+		glBegin(GL_TRIANGLE_FAN);
+		glColor3f(0.8,0.8,0.8);
+		
+		glVertex2f(screen.x/2,screen.y/2);//a
+		glColor3f(0,0,0);
+		glVertex2f(((screen.x/2)+screen.x/94),screen.y/2);//b
+		glVertex2f((screen.x/2),(screen.y/2)-screen.y/94);//c
+		glVertex2f(((screen.x/2)-screen.x/94),screen.y/2);//d
+		glVertex2f((screen.x/2) - screen.x/132,(screen.y/2)+screen.y/94);//e
+		glVertex2f((screen.x/2) + screen.x/132,(screen.y/2)+screen.y/94);//f
+		glVertex2f(((screen.x/2)+screen.x/94),screen.y/2);//g
+		
+		glVertex2f(screen.x/2,screen.y/2);//h
+
+		
+	glEnd();
+	//drawBoxedMenu(4,"Line1|Line2|Line3|Line4|");
+	}
+	else
+	{
+		
+		glBegin(GL_QUADS);
+		
+			glColor3f(0.0f, 0.0f, 0.0f);
+			glVertex2f(screen.x/4,(screen.y/2) + (screen.y/5));
+			glColor3f(0.2f, 0.0f, 0.0f);
+			glVertex2f(screen.x/4,(screen.y/2) - (screen.y/5));
+			glColor3f(0.0f, 0.2f, 0.0f);
+			glVertex2f((screen.x/2) + (screen.x/4),(screen.y/2) - (screen.y/5));
+			glColor3f(0.0f, 0.0f, 0.2f);
+			glVertex2f((screen.x/2) + (screen.x/4),(screen.y/2) + (screen.y/5));
+
+		glEnd();
+	}
+
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -597,4 +629,76 @@ void drawMenu()
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
+}
+
+//Use the mouse click function along side this
+void drawBoxedMenu(int rows,std::string text)
+{
+	std::string daText[6];
+	std::string delimiter = "|";
+	size_t pos = 0;
+	std::string token;// = text.substr(0, text.find(delimiter));
+
+	int order = 0;
+	while ((pos = text.find(delimiter)) != std::string::npos) {
+		token = text.substr(0, pos);
+		std::cout << token << std::endl;
+		daText[order] = token;
+		text.erase(0, pos + delimiter.length());
+		order++;
+	}
+	//float boxY = (
+
+	if (rows > 6)
+		rows = 6;
+
+
+	
+	for (int i = 0;order > i;i++)
+	{
+		//for(int ii = daText[order].size(); ii > 0; ii--)
+		{
+		int ii = 0;
+		for (auto c = daText[i].begin(); c != daText[i].end(); ++c)
+		{ 
+			ii++;
+			glPushMatrix();
+			glColor3f(1,0,0);
+			glTranslatef((screen.x/4) + (ii*(screen.x/40)), ((screen.y/8.5)*i) + (screen.y/6), 0);
+			glRotatef(180, 1.0, 0.0, 0.0);
+			glScalef(0.2,0.2,0.2);
+			glutStrokeCharacter(GLUT_STROKE_ROMAN,*c);
+			glPopMatrix();
+		}
+		}
+	}
+
+	for (int i = 0; i < rows; i++)
+	{
+		glBegin(GL_QUADS);
+			glColor3f(1.0f, 1.0f, 1.0f);
+			glVertex2f(screen.x/4,((screen.y/8.5)*i) + (screen.y/4));
+			glVertex2f(screen.x/4,((screen.y/8.5)*i) + (screen.y/6));
+			glVertex2f(screen.x/2 + screen.x/4,((screen.y/8.5)*i) + (screen.y/6));
+			glVertex2f(screen.x/2 + screen.x/4,((screen.y/8.5)*i) + (screen.y/4));
+		glEnd();
+		//for (int
+		//glutStrokeCharacter(GLUT_STROKE_ROMAN,text[0]);
+	}
+	
+	glBegin(GL_QUADS);
+
+		glColor3f(0,0,0);
+
+		glVertex2f((screen.x/4.5) - 20,((screen.y/8.5)*rows) + (screen.y/4) - 20);
+		
+		glVertex2f(screen.x/4.5,(screen.y/6) - 20);
+		
+		glVertex2f(((screen.x/2) + (screen.x/3.5)) - 20,(screen.y/6) - 20);
+		
+		glVertex2f((screen.x/2) + (screen.x/3.5),((screen.y/8.5)*rows) + (screen.y/4) - 20);
+
+
+	glEnd();
+
 }

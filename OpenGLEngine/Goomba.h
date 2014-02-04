@@ -1,6 +1,8 @@
 #pragma once
 #include "enemy.h"
 #include "Cube.h"
+#include "SOIL.h"
+#include <sstream>
 class Goomba :
 	public Enemy
 {
@@ -13,9 +15,13 @@ public:
 	bool rebound;
 	bool killOff;
 	Cube cube;
-
-	void update();
+	GLuint	texture[10];
+	float curTex;
+	float light;
+	void update(float lighInf,vector3 playerPos);
 	void initlize(vector3 starting,vector3 speed, vector3 distance);
 	void draw(void);
+	int LoadGLTextures();
+	int LoadGLTextures(int limit);
 };
 

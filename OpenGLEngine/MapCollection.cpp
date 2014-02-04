@@ -16,7 +16,7 @@ MapCollection::~MapCollection(void)
 
 void MapCollection::init(int trees,int cubes,int goombas,int killers)
 {
-	curr = MENU;
+	curr = GAME;
 	vector2 size(-1000,1);
 	vector3 position(500,-10,-500);
 	vector3 goombaDist(5,0,5);
@@ -54,7 +54,7 @@ void MapCollection::init(int trees,int cubes,int goombas,int killers)
 	
 	srand (time(0));
 	vector3 goombaLoc(10,0,10);
-	vector3 goombaSpeed(0.1f,0,0);
+	vector3 goombaSpeed(0.01f,0,0);
 	//0.5 is pretty fast btw
 
 	for (int i = 0; i < goombas; i++)
@@ -77,6 +77,7 @@ void MapCollection::init(int trees,int cubes,int goombas,int killers)
 		this->goombas[i].initlize(goombaLoc,goombaSpeed,goombaDist);
 	}
 	reloadGun = false;
+	paused = false;
 }
 
 void MapCollection::draw(void)
@@ -130,7 +131,7 @@ void MapCollection::draw(void)
 	}
 }
 
-bool MapCollection::update(vector3 & playerSpeed,vector3 & playerPos, vector3 & playerSize, int & jump, float & invtimer,float & playerHealth)
+bool MapCollection::update(vector3 & playerSpeed,vector3 & playerPos, vector3 & playerSize, int & jump, float & invtimer,float & playerHealth,float & playerInf)
 {
 	//std::string output = std::to_string(static_cast<long long>(playerPos.x)) + "," + std::to_string(static_cast<long long>(playerPos.y)) + "," + std::to_string(static_cast<long long>(playerPos.z));
 	//std::cout << output << "\n";// << "/n";
@@ -138,6 +139,8 @@ bool MapCollection::update(vector3 & playerSpeed,vector3 & playerPos, vector3 & 
 	{
 	case GAME:
 		{
+			if (!paused)
+			{
 			if (playerHealth <= 0)
 				curr = EXIT;
 			vector3 size(20,5,20);	
@@ -229,7 +232,7 @@ bool MapCollection::update(vector3 & playerSpeed,vector3 & playerPos, vector3 & 
 				}
 				else
 				{
-				it_goomba->second.update();
+				it_goomba->second.update(playerInf,playerPos);
 				if (invtimer == 0)
 				{
 					Collision playerCllision((playerSpeed),(playerPos),(it_goomba->second.position),10);
@@ -248,6 +251,7 @@ bool MapCollection::update(vector3 & playerSpeed,vector3 & playerPos, vector3 & 
 				iterator->second.update();
 			}
 			return floorColl;
+			}
 			break;}
 	case OPTIONS:
 		{

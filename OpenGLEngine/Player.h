@@ -25,7 +25,7 @@ public:
 	float lx;
 	float lz;
 	float ly;
-	
+	float lightInf;
 	Cube lArm;
 	Cube rArm;
 	float armAngle;
