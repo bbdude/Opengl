@@ -1,6 +1,8 @@
 #pragma once
 #include "VectorLib.h"
 #include "glut.h"
+#include "SOIL.h"
+#include <sstream>
 #define RED		= vector3(1, 0, 0)
 #define GREEN	= vector3(0, 1, 0)
 #define BLUE	= vector3(0, 0, 1)

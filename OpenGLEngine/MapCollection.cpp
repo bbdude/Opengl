@@ -24,12 +24,14 @@ void MapCollection::init(int trees,int cubes,int goombas,int killers)
 
 	this->cubes["Floor"];
 	this->cubes["Floor"].fill(position,size,color,0);
+	this->cubes["Floor"].init();
 
 	size.x = -10;
 	size.y = 10;
 	position.fill(5,3,5);
 	this->cubes["RBox"];
-	this->cubes["RBox"].fill(position,size,0);
+	this->cubes["RBox"].fill(position, size, 0);
+	this->cubes["RBox"].init();
 
 	
 	size.x = 5;
@@ -46,6 +48,9 @@ void MapCollection::init(int trees,int cubes,int goombas,int killers)
 	}
 
 	masterBullet.setColor(1,0,0);
+
+	masterBullet.filename = "bullet.png";
+	masterBullet.init();
 
 	for (int i = 0; i < trees; i++)
 	{
@@ -95,15 +100,22 @@ void MapCollection::draw(void)
 			typedef std::map<std::string, Cube>::iterator it_cube;
 			for(it_cube iterator = cubes.begin(); iterator != cubes.end(); iterator++) 
 			{
-				if (iterator->second.color.x <= 0 && iterator->second.color.y <= 0 && iterator->second.color.z <= 0)
-					iterator->second.draw(0,0,0);
+				if (iterator->first == "Floor")
+				{
+					if (iterator->second.color.x <= 0 && iterator->second.color.y <= 0 && iterator->second.color.z <= 0)
+						iterator->second.draw(0, 0, 0);
+					else
+						iterator->second.draw();
+				}
 				else
-					iterator->second.draw();
+				{
+					iterator->second.drawTex();
+				}
 			}
 			typedef std::map<int, Bullet>::iterator it_bullet;
 			for(it_bullet iterator = bullets.begin(); iterator != bullets.end(); iterator++) 
 			{
-				iterator->second.draw();
+				iterator->second.drawTex();
 			}
 			typedef std::map<int, Goomba>::iterator it_goomba;
 			for(it_goomba iterator = goombas.begin(); iterator != goombas.end(); iterator++) 
@@ -143,18 +155,19 @@ bool MapCollection::update(vector3 & playerSpeed,vector3 & playerPos, vector3 & 
 			{
 			if (playerHealth <= 0)
 				curr = EXIT;
-			vector3 size(20,5,20);	
+			bool floorColl = false;
+			/*vector3 size(20,5,20);	
 			typedef std::map<int, Tree>::iterator it_type;
 			Collision coll;
 			Collision playerColl(playerSpeed,playerPos,playerPos,1);
-			bool floorColl = false;
 
 			for(it_type iterator = trees.begin(); iterator != trees.end(); iterator++) 
 			{
-
+				
+				
 				float radius = 10;
 		
-				coll.vecCenter = iterator->second.position;// + iterator->second.speed;
+				coll.vecCenter = iterator->second.position;
 				coll.radius = iterator->second.base.base;
 				coll.speed = playerSpeed;
 				coll.position = playerPos;
@@ -168,27 +181,34 @@ bool MapCollection::update(vector3 & playerSpeed,vector3 & playerPos, vector3 & 
 				if (CheckBoxCollision(posz,iterator->second.base.position,playerSize,size))
 					playerSpeed.z = 0;
 
-			}
+			}*/
 			typedef std::map<std::string, Cube>::iterator it_cube;
-			for(it_cube iterator = cubes.begin(); iterator != cubes.end(); iterator++) 
+			for (it_cube iterator = cubes.begin(); iterator != cubes.end(); iterator++)
 			{
-				/*if (playerPos.y - playerSize.y > iterator->second.position.y + iterator->second.size.y && 
-					playerPos.y - playerSize.y < iterator->second.position.y + iterator->second.size.y + 5 && 
-					playerPos.x >= iterator->second.position.x && 
+				/*if (playerPos.y - playerSize.y > iterator->second.position.y + iterator->second.size.y &&
+					playerPos.y - playerSize.y < iterator->second.position.y + iterator->second.size.y + 5 &&
+					playerPos.x >= iterator->second.position.x &&
 					playerPos.x <=iterator->second.position.x + iterator->second.size.x &&
-					playerPos.z >= iterator->second.position.z && 
+					playerPos.z >= iterator->second.position.z &&
 					playerPos.z <=iterator->second.position.z + iterator->second.size.x &&
 					iterator->first == "RBox")
 
 					floorColl = true;
-				*/
+					*/
 				//Collision boxColl(iterator->second.speed,iterator->second.position,iterator->second.position,iterator->second.size.x/2);
 				//if (!playerColl.checkSquareToSquareX(boxColl))
 				//	playerSpeed.x = 0;
 				//if (!playerColl.checkSquareToSquareZ(boxColl))
 				//	playerSpeed.z = 0;
 
-				iterator->second.update();
+				if (iterator->first != "Floor")
+				{
+					iterator->second.update(playerInf,playerPos);
+				}
+				else
+				{
+					iterator->second.update();
+				}
 			}
 			std::map<int, Goomba>::iterator it_goomba = goombas.begin();
 			std::map<int, Bullet>::iterator it_bullet = bullets.begin();
@@ -205,7 +225,7 @@ bool MapCollection::update(vector3 & playerSpeed,vector3 & playerPos, vector3 & 
 				}else
 				{
 					it_bullet->second.updateSpeed();
-					it_bullet->second.update();
+					it_bullet->second.update(playerInf,playerPos);
 					while(it_goomba != goombas.end() && it_bullet->second.killOff != true)
 					{
 						Collision bulletCollision((it_bullet->second.speed),(it_bullet->second.position),(it_goomba->second.position),10);
@@ -353,6 +373,7 @@ void MapCollection::fireBullet(vector3 & playerPos,float angle, float lx,float l
 		newBullet.speed.z = lz * 0.5f;
 		newBullet.speed.y = ly * 0.5f;
 		newBullet.position.y = playerPos.y;
+		newBullet.color.fill(0.5f, 0.5f, 0.5f);
 		bullets[whatBullet] << newBullet;
 	}
 	else

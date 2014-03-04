@@ -55,6 +55,7 @@
     <None Include="test0.png">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="glfw3.dll" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -105,6 +106,12 @@
     <ClInclude Include="..\OpenGLEngine2D\SOIL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GLFW\glfw3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GLFW\glfw3native.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -153,5 +160,14 @@
   <ItemGroup>
     <Library Include="glut32.lib" />
     <Library Include="SOIL.lib" />
+    <Library Include="glfw3.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="cube.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bullet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

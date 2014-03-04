@@ -1,8 +1,6 @@
 #pragma once
 #include "enemy.h"
 #include "Cube.h"
-#include "SOIL.h"
-#include <sstream>
 class Goomba :
 	public Enemy
 {

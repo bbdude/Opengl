@@ -1,10 +1,12 @@
 // OpenGLEngine.cpp : Defines the entry point for the console application.
 //
-
+#define GLFW_INCLUDE_GLU
+//#pragma comment(lib, "glfw3.lib")
 #include "stdafx.h"
 
 #include <windows.h>
 #include "glut.h"
+#include "GLFW\glfw3.h"
 #include <stdio.h>
 #include <gl/GL.h>
 #include <gl\GLU.h>
@@ -40,6 +42,7 @@ void init(void)
 	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 	glutSetCursor(GLUT_CURSOR_NONE);
+	//glfwDisable(GLFW_MOUSE_CURSOR);
 	maps.init(1,1,3,1);
 }
 
@@ -180,47 +183,6 @@ void keyboard_s(int key, int x,int y)
 
 void mouseMotion(int x, int y)
 {
-	//int button,int state, 
-	//if(state == GLUT_DOWN && button == GLUT_LEFT_BUTTON)
-		//bulletpair.fireBullet();
-	//if (x >= screen.x/2 + 60 || x <= screen.x/2 - 60)
-	//{
-	/*
-	if (x > mouse.x)
-	{
-		player.angle -= 0.05f;
-		player.lx = sin(player.angle);
-		player.lz = -cos(player.angle);
-	}
-	else if (x < mouse.x)
-	{
-		player.angle += 0.05f;
-		player.lx = sin(player.angle);
-		player.lz = -cos(player.angle);
-	}
-	if (y > mouse.y)
-	{
-		player.vertAngle += 0.05f;
-		if (player.vertAngle < 360)
-			player.vertAngle = 360;
-		player.ly = sin(player.vertAngle);
-	}
-	else if (y < mouse.y)
-	{
-		player.vertAngle -= 0.05f;
-		if (player.vertAngle < 0)
-			player.vertAngle = 0;
-		player.ly = sin(player.vertAngle);
-	}
-	*/
-	//if (mouse.x < 10)
-	//	glutWarpPointer(50,mouse.y);
-	//else if (mouse.x > screen.x - 10)
-	//	glutWarpPointer(screen.x - 50,mouse.y);
-	//if (mouse.y < 10)
-	//	glutWarpPointer(mouse.x,50);
-	//else if (mouse.y > screen.y - 10)
-	//	glutWarpPointer(mouse.x, screen.y - 50);
 	if (!maps.paused)
 	{
 	static bool warped = false;
@@ -321,7 +283,6 @@ void update()
 {
 	if (!maps.paused)
 	{
-	//bool falling = maps.update(player.speed,player.position,player.size,player.jump) ;
 		bool fall = maps.update(player.speed,player.position,player.size,player.jump,player.invTimer,player.health,player.lightInf);
 	player.update(fall);
 	}
@@ -348,6 +309,7 @@ void display(void)
 		maps.draw();
 	
 		drawGui();
+
 		break;
 	case maps.MENU:
 		drawMenu();
@@ -369,11 +331,13 @@ void display(void)
 
 int main(int argc, char **argv)
 {
+	if (!glfwInit())
+		exit(EXIT_FAILURE);
 	glutInit(&argc,argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(screen.x,screen.y);
 	glutInitWindowPosition(50,50);
-	glutCreateWindow("Darths 3d engine");
+	glutCreateWindow("Darths 3d engine, Fo Shizzle");
 
 	glutDisplayFunc(display);
 	glutIdleFunc(display);
@@ -539,12 +503,12 @@ void drawGui()
 
 		
 	glEnd();
-	//drawBoxedMenu(4,"Line1|Line2|Line3|Line4|");
+	
 	}
 	else
 	{
-		
-		glBegin(GL_QUADS);
+		drawBoxedMenu(4, "Line1|Line2|Line3|Line4|");
+		/*glBegin(GL_QUADS);
 		
 			glColor3f(0.0f, 0.0f, 0.0f);
 			glVertex2f(screen.x/4,(screen.y/2) + (screen.y/5));
@@ -555,7 +519,7 @@ void drawGui()
 			glColor3f(0.0f, 0.0f, 0.2f);
 			glVertex2f((screen.x/2) + (screen.x/4),(screen.y/2) + (screen.y/5));
 
-		glEnd();
+		glEnd();*/
 	}
 
 

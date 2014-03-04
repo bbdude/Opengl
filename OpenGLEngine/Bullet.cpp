@@ -27,6 +27,7 @@ void Bullet::operator << (Bullet change)
 	size = change.size;
 	speed = change.speed;
 	position = change.position;
+	texture = change.texture;
 }
 void Bullet::updateSpeed()
 {
