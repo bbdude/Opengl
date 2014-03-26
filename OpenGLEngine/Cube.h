@@ -34,8 +34,9 @@ public:
 	void update(float lighInf, vector3 playerPos);
 	void draw(void);
 	void draw(GLfloat r, GLfloat g, GLfloat b);
-	void draw(GLfloat r, GLfloat g, GLfloat b,GLfloat rr, GLfloat gg, GLfloat bb,GLfloat rrr, GLfloat ggg, GLfloat bbb);
+	void draw(GLfloat r, GLfloat g, GLfloat b, GLfloat rr, GLfloat gg, GLfloat bb, GLfloat rrr, GLfloat ggg, GLfloat bbb);
 	void drawTex();
+	void drawTexN();
 	void init();
 	void fill(vector3 position, vector2 size, vector3 color, float angle);
 	void fill(vector3 position, vector2 size, float angle);

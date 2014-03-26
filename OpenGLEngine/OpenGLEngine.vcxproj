@@ -52,11 +52,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BrowseInformation>true</BrowseInformation>
+      <AdditionalIncludeDirectories>C:/Python33/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;C:/Python33/libs/python33.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Bscmake>
       <PreserveSBR>true</PreserveSBR>
@@ -84,6 +85,7 @@
     <None Include="glfw3.dll" />
     <None Include="glut.def" />
     <None Include="glut32.dll" />
+    <None Include="python33.dll" />
     <None Include="ReadMe.txt" />
     <None Include="test.bmp" />
     <None Include="test0.png" />
@@ -92,9 +94,11 @@
     <None Include="test3.png" />
     <None Include="test4.png" />
     <None Include="test5.png" />
+    <None Include="testPython.py" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\OpenGLEngine2D\SOIL.h" />
+    <ClInclude Include="AxisControl.h" />
     <ClInclude Include="BasicShape.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Collision.h" />
@@ -114,6 +118,7 @@
     <ClInclude Include="VectorLib.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AxisControl.cpp" />
     <ClCompile Include="BasicShape.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Collision.cpp" />
@@ -140,6 +145,7 @@
   <ItemGroup>
     <Image Include="bullet.png" />
     <Image Include="cube.png" />
+    <Image Include="gs.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

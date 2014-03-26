@@ -4,9 +4,10 @@
 //#pragma comment(lib, "glfw3.lib")
 #include "stdafx.h"
 
+#include <iostream>
 #include <windows.h>
 #include "glut.h"
-#include "GLFW\glfw3.h"
+#include <Python.h>
 #include <stdio.h>
 #include <gl/GL.h>
 #include <gl\GLU.h>
@@ -30,6 +31,8 @@ void drawGui();
 void drawMenu();
 void mouseClick(int button,int state,int x,int y);
 void drawBoxedMenu(int rows,std::string text);
+
+using namespace std;
 
 void init(void)
 {
@@ -329,10 +332,71 @@ void display(void)
 	keyCommands();
 }
 
-int main(int argc, char **argv)
+static float CallPythonFunc()
 {
-	if (!glfwInit())
-		exit(EXIT_FAILURE);
+	PyObject *pName, *pModule, *pDict, *pFunc, *pValue, *pArgs;
+	float ret;
+
+	Py_Initialize();
+
+	pName = PyBytes_FromString("testPython");
+
+	pModule = PyImport_ImportModule("testPython");
+
+	pDict = PyModule_GetDict(pModule);
+
+	pFunc = PyDict_GetItemString(pDict, "add");
+
+
+	if (PyCallable_Check(pFunc))
+	{
+		pArgs = PyTuple_New(2 /*number of arguments*/);
+
+		// Argument 1
+		pValue = PyFloat_FromDouble((double)5);
+		PyTuple_SetItem(pArgs, 0, pValue);
+
+		// Argument 2
+		pValue = PyFloat_FromDouble((double)6);
+		PyTuple_SetItem(pArgs, 1, pValue);
+
+		pValue = PyObject_CallObject(pFunc, pArgs);
+
+		ret = (float)PyFloat_AsDouble(pValue);
+
+	}
+	Py_Finalize();
+
+	return ret;
+}
+
+
+
+int main(int argc, char** argv)
+{
+	//if (!glfwInit())
+		//exit(EXIT_FAILURE);
+
+
+	try // always check for Python_exceptions
+	{
+
+		// Create an instance of the interpreter.
+		//PyObject py(argc, argv);
+		Py_SetProgramName((wchar_t*)argv[0]);
+		Py_Initialize();
+		std::cout << CallPythonFunc();
+		Py_Finalize();
+
+	}
+	catch (exception ex)
+	{
+		std::cout << ex.what();
+	}
+
+
+
+
 	glutInit(&argc,argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(screen.x,screen.y);

@@ -9,6 +9,7 @@
 #include "Bullet.h"
 #include "Goomba.h"
 #include "Killer.h"
+#include "AxisControl.h"
 
 class MapCollection
 {
@@ -32,6 +33,8 @@ public:
 	std::map<int, Killer> killers;
 	std::map<std::string, Cube> cubes;
 	std::map<unsigned char, bool> keyState;
+
+	AxisControl theAxis;
 
 	int whatBullet;
 	bool reloadGun;

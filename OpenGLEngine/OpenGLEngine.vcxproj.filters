@@ -56,6 +56,8 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="glfw3.dll" />
+    <None Include="python33.dll" />
+    <None Include="testPython.py" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -112,6 +114,9 @@
     <ClInclude Include="GLFW\glfw3native.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AxisControl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -156,6 +161,9 @@
     <ClCompile Include="Killer.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="AxisControl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="glut32.lib" />
@@ -167,6 +175,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="bullet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="gs.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

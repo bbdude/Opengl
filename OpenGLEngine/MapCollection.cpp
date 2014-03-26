@@ -83,6 +83,8 @@ void MapCollection::init(int trees,int cubes,int goombas,int killers)
 	}
 	reloadGun = false;
 	paused = false;
+
+	theAxis.init(vector3(0, 0, 0));
 }
 
 void MapCollection::draw(void)
@@ -127,7 +129,9 @@ void MapCollection::draw(void)
 			{
 				iterator->second.draw();
 			}
-			break;}
+			theAxis.drawTex();
+			break;
+	}
 	case OPTIONS:
 		{
 			break;}
@@ -265,6 +269,7 @@ bool MapCollection::update(vector3 & playerSpeed,vector3 & playerPos, vector3 & 
 				++it_goomba;
 				}
 			}
+			theAxis.update(playerPos);
 			typedef std::map<int, Killer>::iterator it_killer;
 			for(it_killer iterator = killers.begin(); iterator != killers.end(); iterator++) 
 			{

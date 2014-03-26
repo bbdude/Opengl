@@ -174,7 +174,7 @@ void Cube::drawTex(void)
 	glBindTexture(GL_TEXTURE_2D, texture);
 	//glColor4f(0.1f + light,0.1f + light,0.1f + light,0.1f + light);
 	//glColor4f(0.1f - light,0.1f - light,0.1f - light,0.1f - light);
-	
+
 	glColor4f(1 - light, 1 - light, 1 - light, 1 - light);
 	//glColor4f(0.5f,0.5f,0.5f,0.5f);
 	//glBindTexture(GL_TEXTURE_2D, texture[0]);
@@ -197,6 +197,30 @@ void Cube::drawTex(void)
 	//	curTex = 0;
 	glDepthFunc(GL_LESS);
 	glDisable(GL_TEXTURE_2D);//*/
+	glPopMatrix();
+}
+void Cube::drawTexN(void)
+{
+	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glShadeModel(GL_SMOOTH);
+	glDepthFunc(GL_LEQUAL);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glColor4f(1 - light, 1 - light, 1 - light, 1 - light);
+	glBegin(GL_TRIANGLES);
+	for (int l_index = 0; l_index < 12; l_index++)
+	{
+		glTexCoord2f(0, 0); glVertex3f(vertex[polygon[l_index].a].x, vertex[polygon[l_index].a].y, vertex[polygon[l_index].a].z);
+		glTexCoord2f(1, 0); glVertex3f(vertex[polygon[l_index].b].x, vertex[polygon[l_index].b].y, vertex[polygon[l_index].b].z);
+		glTexCoord2f(0, 1); glVertex3f(vertex[polygon[l_index].c].x, vertex[polygon[l_index].c].y, vertex[polygon[l_index].c].z);
+
+	}
+	glEnd();
+	glDepthFunc(GL_LESS);
+	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 }
 
