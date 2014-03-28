@@ -268,6 +268,20 @@ int Cube::LoadGLTextures(std::string file)
 	
 	return true;										// Return Success
 }
+
+/*void Cube::drawModel(void)
+{
+	if (!pmodel) {
+		pmodel = glmReadOBJ("porsche.obj");
+		if (!pmodel) exit(0);
+		glmUnitize(pmodel);
+		glmFacetNormals(pmodel);
+		glmVertexNormals(pmodel, 90.0);
+	}
+
+	glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
+}*/
+
 /*
 int Cube::LoadGLTextures(int limit)
 {

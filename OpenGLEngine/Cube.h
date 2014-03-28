@@ -37,6 +37,7 @@ public:
 	void draw(GLfloat r, GLfloat g, GLfloat b, GLfloat rr, GLfloat gg, GLfloat bb, GLfloat rrr, GLfloat ggg, GLfloat bbb);
 	void drawTex();
 	void drawTexN();
+	void drawModel(void);
 	void init();
 	void fill(vector3 position, vector2 size, vector3 color, float angle);
 	void fill(vector3 position, vector2 size, float angle);
@@ -56,6 +57,7 @@ public:
 	char * filename;
 
 	GLuint	texture;
+	//GLMmodel* pmodel = NULL;
 
 	vertex_type vertex[MAX_VERTICES]; 
     polygon_type polygon[MAX_POLYGONS];

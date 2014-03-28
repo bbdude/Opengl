@@ -85,6 +85,7 @@
     <None Include="glfw3.dll" />
     <None Include="glut.def" />
     <None Include="glut32.dll" />
+    <None Include="porsche.mtl" />
     <None Include="python33.dll" />
     <None Include="ReadMe.txt" />
     <None Include="test.bmp" />
@@ -146,6 +147,11 @@
     <Image Include="bullet.png" />
     <Image Include="cube.png" />
     <Image Include="gs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="porsche.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

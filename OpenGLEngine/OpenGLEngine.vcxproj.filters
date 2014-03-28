@@ -58,6 +58,9 @@
     <None Include="glfw3.dll" />
     <None Include="python33.dll" />
     <None Include="testPython.py" />
+    <None Include="porsche.mtl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -180,5 +183,10 @@
     <Image Include="gs.png">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="porsche.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
   </ItemGroup>
 </Project>
