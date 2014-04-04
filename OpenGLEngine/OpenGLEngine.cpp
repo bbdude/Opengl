@@ -345,7 +345,7 @@ static float CallPythonFunc()
 
 	pDict = PyModule_GetDict(pModule);
 
-	pFunc = PyDict_GetItemString(pDict, "add");
+	pFunc = PyDict_GetItemString(pDict, "wander");
 
 
 	if (PyCallable_Check(pFunc))

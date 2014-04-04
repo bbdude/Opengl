@@ -38,6 +38,11 @@ public:
 	//d is demon
 	//z is zealous
 	//w is walker
+	//
 	char type;
+	float wander();
+	vector2 seek(float x, float z, float xt, float zt,float speed);
+	float seekX();
+	float seekZ();
 };
 

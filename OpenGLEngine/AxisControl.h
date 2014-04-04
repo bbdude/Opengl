@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <iostream>
 #include "VectorLib.h"
 #include "glut.h"
 #include "SOIL.h"
@@ -69,6 +70,11 @@ public:
 	//Cube cube;
 };
 
+class Chunk
+{
+public:
+	std::vector<std::vector<Block*>> chunks;
+};
 
 class AxisControl
 {
@@ -85,12 +91,38 @@ public:
 
 	//Player positioning
 	vector3 pPositioning;
-	std::vector<std::vector<Block*>> chunks;
+	//std::vector<Chunk> chunks;
 
 
 
 	//vector<AxisObject<Air>> axis;
 	//std::vector<std::unique_ptr<Block>> axis;
+	std::vector<std::vector<std::vector<Block*>>> chunks;
 
 };
 
+/*
+class AxisControl
+{
+public:
+AxisControl();
+//template <class objectType> AxisControl(objectType obj);
+~AxisControl();
+template <class objectType>
+void setElement(int x,int y, objectType obj);
+void init(vector3 playerPos);
+void update(vector3 playerPos);
+void drawTex();
+void drawRaw();
+
+//Player positioning
+vector3 pPositioning;
+std::vector<std::vector<Block*>> chunks;
+
+
+
+//vector<AxisObject<Air>> axis;
+//std::vector<std::unique_ptr<Block>> axis;
+
+};
+*/

@@ -120,25 +120,37 @@ void AxisControl::init(vector3 playerPos)
 			count++;
 		}*/
 	chunks.resize(5);
-	for (auto i = 0; i < chunks.size(); i++)
+	for (auto i = 0; i < chunks.size();i++)
+		chunks[i].resize(5);
+	for (auto i = 0; i < chunks.size();i++)
+	for (auto ii = 0; ii < chunks[i].size(); ii++)
 	{
 		//new vector block pointer
 		std::vector<Block*> nvbp;
-		nvbp = std::vector<Block*>(5);
-		for (unsigned ii = 0; ii < nvbp.size(); ii++)
+		nvbp = std::vector<Block*>(25);
+		int countx = 0;
+		int countz = 0;
+		for (unsigned iii = 0; iii < nvbp.size(); iii++)
 		{
-			nvbp.at(ii) = new GenericSolid();
+			if (countz + 1 >= 5)
+				countz = 1;
+			else
+				countz++;
+			nvbp.at(iii) = new GenericSolid();
 			int breadth = 10;
-			nvbp.at(ii)->cube = Cube(((12.5 * breadth)) - (i * breadth), breadth / 2, ((12.5 * breadth)) - (ii * breadth), breadth, breadth);
-			nvbp.at(ii)->cube.filename = "gs.png";
-			nvbp.at(ii)->cube.init();
-			nvbp.at(ii)->cube.update();
-			nvbp.at(ii)->collidable = true;
-			nvbp.at(ii)->positioning.x = i;
-			nvbp.at(ii)->positioning.z = ii;
-			
+			//nvbp.at(iii)->cube = Cube(((12.5 * breadth)) - (ii * breadth), (breadth * i) / 2, ((12.5 * breadth)) - (iii * breadth), breadth, breadth);
+			nvbp.at(iii)->cube = Cube((((12.5 * breadth)) - ((ii + countx) * breadth)) + ((breadth*5)*i), /*(breadth * i) / 2*/ 0, (((12.5 * breadth)) - (countz * breadth)) + (breadth*i), breadth, breadth);
+			nvbp.at(iii)->cube.filename = "gs.png";
+			nvbp.at(iii)->cube.init();
+			nvbp.at(iii)->cube.update();
+			nvbp.at(iii)->collidable = true;
+			nvbp.at(iii)->positioning.x = ii;
+			nvbp.at(iii)->positioning.z = iii;
+			if (iii % 5 == 0)
+				countx++;
 		}
-		chunks[i] = (nvbp);
+		//chunks[0].chunks[i] = (nvbp);
+		chunks[i].at(ii) = (nvbp);
 
 	}
 
@@ -152,43 +164,22 @@ vector3 calculatePositioning(vector3 position)
 
 void AxisControl::drawTex()
 {
-	/*for (auto & element : chunks) {
-		if (element->distance < 200)
-			element->drawTex();
-		//else
-		//	element->drawModel();
-	}*/
-	/*for (auto & i : chunks)
-	{
-		for (auto & ii : i)
-		{
-			if (ii->distance < 200)
-				ii->drawTex();
-		}
-	}*/
-
 	if (pPositioning.x > 4 || pPositioning.x < 0 || pPositioning.y > 4 || pPositioning.y < 0)
 		return;
 
-	for (auto & i : chunks)
-	{
-		for (auto & ii : i)
-		{
-			if (ii->distance < 200)
-				ii->drawTex();
-		}
-	}
-	/*for (auto & element : chunks[pPositioning.x]) 
-		if (element->distance < 200)
-			element->drawTex();*/
-	//chunks[pPositioning.x][pPositioning.y]->drawTex();
+	for (auto i = 0; i < chunks[pPositioning.x][pPositioning.y].size(); i++)
+		chunks[pPositioning.x][pPositioning.y][i]->drawTex();
 }
 void AxisControl::update(vector3 playerPos)
 {
 	pPositioning = calculatePositioning(playerPos);
+	pPositioning.x -= 6;
+	pPositioning.y *= -1;
+	std::cout << pPositioning.x;// +"Y:" + "Z:");
 	if (pPositioning.x > 4 || pPositioning.x < 0 || pPositioning.y > 4 || pPositioning.y < 0)
 		return;
-	chunks[pPositioning.x][pPositioning.y]->update(playerPos);
+	for (auto i = 0; i < chunks[pPositioning.x][pPositioning.y].size(); i++)
+		chunks[pPositioning.x][pPositioning.y][i]->update(playerPos);
 	/*for (auto & i : chunks)
 	{
 		for (auto & ii : i)
@@ -203,3 +194,37 @@ void AxisControl::update(vector3 playerPos)
 	//	element->update(playerPos);
 	//}
 }
+/*void AxisControl::init(vector3 playerPos)
+{
+
+	playerPos.empty();
+
+	chunks.resize(5);
+	for (auto i = 0; i < chunks.size(); i++)
+		chunks[i].resize(5);
+	for (auto i = 0; i < chunks.size(); i++)
+		for (auto ii = 0; ii < chunks[i].size(); ii++)
+		{
+			//new vector block pointer
+			std::vector<Block*> nvbp;
+			nvbp = std::vector<Block*>(5);
+			for (unsigned iii = 0; iii < nvbp.size(); iii++)
+			{
+				nvbp.at(iii) = new GenericSolid();
+				int breadth = 10;
+				nvbp.at(iii)->cube = Cube(((12.5 * breadth)) - (ii * breadth), (breadth * i) / 2, ((12.5 * breadth)) - (iii * breadth), breadth, breadth);
+				nvbp.at(iii)->cube.filename = "gs.png";
+				nvbp.at(iii)->cube.init();
+				nvbp.at(iii)->cube.update();
+				nvbp.at(iii)->collidable = true;
+				nvbp.at(iii)->positioning.x = ii;
+				nvbp.at(iii)->positioning.z = iii;
+
+			}
+			//chunks[0].chunks[i] = (nvbp);
+			chunks[i].at(ii) = (nvbp);
+
+		}
+
+	//blankSolid.position = starting;
+}*/
